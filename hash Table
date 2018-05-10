@@ -1,1 +1,147 @@
 
+#include<stdio.h>
+#include<malloc.h>
+#include<stdlib.h>
+struct node
+{
+	int count;
+	char a[50];
+	struct node* next;
+};
+struct hash
+{
+	struct node* head;
+	int no_ofwords;
+};
+void check_count(struct hash h[],char *str)
+{
+	int f=0,key,i=0;
+	struct node *ptr;
+	key=gen_key(str);
+	ptr=h[key].head;
+	while(ptr!=NULL)
+	{
+		while(ptr->a[i]!='\0')
+			{
+		 if(*str==ptr->a[i])
+		  {
+		  	printf("%c %c\n",*str,ptr->a[i]);
+	        f=1;	
+			str++;
+			i++;
+		 }
+		 else
+		 {
+		 	f=0;
+		 	break;
+		 }
+	}
+		 if(f==1)
+		 {
+		 	printf("count=%d",ptr->count);
+		 }
+		 ptr=ptr->next;
+		 	}
+		 	if(f==0)
+		 	{
+		 		printf("not found");
+			 }
+}
+void hashed_in(struct hash h[100],int key,char *str)
+{
+	int i=0,f=0;
+	//struct hash h1;
+	struct node *ptr,*trav,*prev;
+	//printf("words=%d\n",h[key].no_ofwords);
+	if(h[key].head==NULL)
+	{
+		ptr=(struct node*)malloc(sizeof(struct node));
+		while(*str!='\0')
+		{
+			ptr->a[i]=*str;
+			str++;
+			i++;
+		}
+		h[key].no_ofwords=1;
+		ptr->next=NULL;
+		h[key].head=ptr;
+		ptr->count=1;
+	}
+	else
+	{
+		trav=h[key].head;
+		while(trav!=NULL)
+		{
+			prev=trav;
+			while(trav->a[i]!='\0')
+			{
+		 if(*str==trav->a[i])
+		  {
+		  	printf("%c %c\n",*str,trav->a[i]);
+	        f=1;	
+			str++;
+			i++;
+		 }
+		 else
+		  {
+		 f=0;
+		 break;
+	      }
+       }
+       if(f==1)
+       {
+       	trav->count=trav->count+1;
+	   }
+			trav=trav->next;
+			f=1;
+	}
+	if(f==0)
+	{
+		ptr=(struct node*)malloc(sizeof(struct node));
+        while(*str!='\0')
+		{
+			ptr->a[i]=*str;
+			str++;
+			i++;
+		}
+		h[key].no_ofwords=h[key].no_ofwords+1;
+		ptr->next=NULL;
+		trav->next=ptr;
+		ptr->count=ptr->count+1;
+	}
+}
+	//printf("%s",ptr->a);
+	//printf("count=%d\n",prev->count);
+}
+int gen_key(char *str)
+{
+	int i=0,s=0,key;
+	while(*str!='\0')
+	{
+	//	printf("%c %d\n",*str,*str);
+		s=s+*str;
+		str++;
+	}
+	key=s%10;
+	return key;
+}
+void gen_hash(struct hash  h[100],char *(*str)[5])
+{
+	int i=0,j=0,key;
+	for(i=0;i<5;i++)
+	{
+		key=gen_key((*str)[i]);
+		printf("key=%d\n",key);
+		hashed_in(h,key,(*str)[i]);
+		//printf("\n");
+	}
+}
+int main()
+{
+	char *str[5]={"my","chitkara","welcome","my","chitkara"};
+	struct hash h[100]={0};
+    gen_hash(h,str);
+    printf("hash is ready\n");
+    char s1[]={"chitkara"};
+    check_count(h,s1);
+}
